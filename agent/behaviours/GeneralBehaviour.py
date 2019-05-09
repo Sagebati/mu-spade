@@ -7,7 +7,13 @@ from agent.coordination import Action, CoordinateAction
 
 
 class GeneralBehaviour(FSMBehaviour):
+    """The behaviour of the agent"""
     def __init__(self, actions: [Action], contacts: [Agent] = []):
+        """
+        Creates an State for each action on the FSMBehaviour.
+        :param actions: The list of actions
+        :param contacts: the contacts of the agent
+        """
         super().__init__()
         init_state = Init()
         self.add_state(name="Init", state=init_state, initial=True)
@@ -96,6 +102,11 @@ class DoingCoordinateAction(State):
             await self.send(message)
 
     async def __handle_handshake(self, message):
+        """
+        Method when the agent receives an handshake. It can accept it or reject it based on the goal of the coordinate
+        action.
+        :param message: the message to handle
+        """
         print("Traiter message", message.body)
         template = Template()
         template.set_metadata("performative", "proposal")
@@ -113,6 +124,9 @@ class DoingCoordinateAction(State):
                 await self.send(accept_pop)
 
     async def __prepare_action(self):
+        """Search an agent to collaborate for the coordinate action, then tries to connect with him,
+            doesn't begin the action if there is no worker.
+         """
         import random
         while len(self.actions_remaining) != 0:
             print("Search agent who has the same goal", self.coord_action.goal)
@@ -126,6 +140,11 @@ class DoingCoordinateAction(State):
                     await self.__begin_handshake(agent_jid)
 
     async def __begin_handshake(self, agent_jid):
+        """
+        Begin the negociation with the agent, send the goal and wait for a reponse.
+        if the agent accepts then launches the handshake.
+        :param agent_jid: the agent to communicate
+        """
         message_to_send = Message(to=agent_jid)
         message_to_send.set_metadata("performative", "proposal")
         message_to_send.body = self.coord_action.goal
@@ -144,6 +163,12 @@ class DoingCoordinateAction(State):
                 await self.first_handshake(message)
 
     async def first_handshake(self, message: Message):
+        """
+        Send the first message for the handshake, with the action I choose to do.
+        Then the agent send back his action.
+        :param message:
+        :return:
+        """
         to_send = message.make_reply()
         my_action_key = self.__pick_my_actions()
         to_send.set_metadata("performative", "inform")

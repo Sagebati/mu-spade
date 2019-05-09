@@ -1,6 +1,6 @@
 class Action:
     """
-    Behaviour to do the action.
+    Represents an action.
     """
 
     def __init__(self, name="", function=None):
