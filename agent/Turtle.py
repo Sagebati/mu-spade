@@ -1,7 +1,5 @@
 import logging
 
-from aioxmpp import PresenceShow
-
 from agent.CoordAgent import CoordAgent
 from agent.behaviours.GeneralBehaviour import GeneralBehaviour
 
