@@ -1,5 +1,10 @@
-from agent.coordination import Action
-from agent.coordination import CoordinateAction
+import logging
+
+from agent.coordination import CoordinateAction, Action
+
+pwd = "dummy"
+jwd1 = "turtle_a@127.0.0.1"
+jwd2 = "turtle_b@127.0.0.1"
 
 action_coord = CoordinateAction(goal="PushTheBox", actions={
     "action1": [
@@ -17,3 +22,15 @@ exemple1 = [
     Action("Bouger3", function=lambda a: print("Je bouger ver x,y")),
     action_coord
 ]
+
+if __name__ == '__main__':
+    from agent.Turtle import Turtle
+
+    turtleBot_a = Turtle(jwd1, pwd, exemple1, [jwd2])
+    turtleBot_b = Turtle(jwd2, pwd, exemple1, [jwd1])
+    turtleBot_a.start()
+    turtleBot_a.web.start(hostname="127.0.0.1", port="10000")
+    turtleBot_b.start()
+    turtleBot_b.web.start(hostname="127.0.0.1", port="10001")
+    turtleBot_b.stop()
+    turtleBot_a.stop()

@@ -1,9 +1,13 @@
+import logging
+
 from spade.agent import Agent
 from spade.behaviour import State
 from spade.message import Message
 from spade.template import Template
 
 from agent.coordination import CoordinateAction
+
+logger = logging.getLogger()
 
 
 class DoingCoordinateAction(State):
@@ -27,7 +31,7 @@ class DoingCoordinateAction(State):
         return action_choose_key
 
     async def __second_handshake(self):
-        print("Waiting for instructions")
+        logger.info("Waiting for instructions")
         instructions_message = await self.receive(50)
         to_reveive = Template()
         to_reveive.set_metadata("performative", "inform")
@@ -49,18 +53,18 @@ class DoingCoordinateAction(State):
         action.
         :param message: the message to handle
         """
-        print("Traiter message", message.body)
+        logger.info("Traiter message %s", message.body)
         template = Template()
         template.set_metadata("performative", "proposal")
         if template.match(message):
             if message.body == self.coord_action.goal:
-                print("Accept proposal the action it's the same goal ")
+                logger.info("Accept proposal the action it's the same goal ")
                 accept_pop = message.make_reply()
                 accept_pop.set_metadata("performative", "accept-proposal")
                 await self.send(accept_pop)
                 await self.__second_handshake()
             else:
-                print("Not the same goal")
+                logger.info("Not the same goal")
                 accept_pop = message.make_reply()
                 accept_pop.set_metadata("performative", "reject-proposal")
                 await self.send(accept_pop)
@@ -71,14 +75,14 @@ class DoingCoordinateAction(State):
          """
         import random
         while len(self.actions_remaining) != 0:
-            print("Search agent who has the same goal", self.coord_action.goal)
+            logger.info("Search agent who has the same goal: %s", self.coord_action.goal)
             msg = await self.receive(random.randint(1, 20))
             if msg:
                 await self.__handle_handshake(msg)
                 break
             else:
                 for agent_jid in self.contacts:
-                    print("Try with ", agent_jid)
+                    logger.info("Try with ", agent_jid)
                     await self.__begin_handshake(agent_jid)
 
     async def __begin_handshake(self, agent_jid):
@@ -90,18 +94,18 @@ class DoingCoordinateAction(State):
         message_to_send = Message(to=agent_jid)
         message_to_send.set_metadata("performative", "proposal")
         message_to_send.body = self.coord_action.goal
-        print("Send message to ", agent_jid)
+        logger.info("Send message to ", agent_jid)
         await self.send(message_to_send)
-        print("Waiting for the reponse")
+        logger.info("Waiting for the reponse")
         message = await self.receive(100)
         if message is None:
-            print("The dest didn't respond")
+            logger.info("The dest didn't respond")
         else:
             t = Template()
             t.sender = agent_jid
             t.set_metadata("performative", "accept-proposal")
             if t.match(message):
-                print(agent_jid, " accepted the proposal")
+                logger.info(agent_jid, " accepted the proposal")
                 await self.first_handshake(message)
 
     async def first_handshake(self, message: Message):
@@ -114,13 +118,13 @@ class DoingCoordinateAction(State):
         my_action_key = self.__pick_my_actions()
         to_send.set_metadata("performative", "inform")
         to_send.body = my_action_key
-        print("Sending my chose action to the other agent")
+        logger.info("Sending my chose action to the other agent")
         await self.send(to_send)
         reply = await self.receive(100)
         reply_verif = Template()
         reply_verif.set_metadata("performative", "inform")
         if reply_verif.match(reply):
-            print("Received the action of the other agent")
+            logger.info("Received the action of the other agent")
             self.my_actions = self.coord_action.actions[my_action_key]
             self.actions_remaining.remove(my_action_key)
             self.actions_remaining.remove(reply.body)
@@ -129,11 +133,10 @@ class DoingCoordinateAction(State):
         """
         Prepare the coordinate actions searching for workers.
         """
-        print("Start coordinate action")
-        print("Preparing")
+        logger.info("Start coordinate action")
+        logger.info("Preparing")
         await self.__prepare_action()
 
     async def run(self):
-        print("Searching for helpers")
         for a in self.my_actions:
             a.do()

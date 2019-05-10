@@ -1,3 +1,5 @@
+import logging
+
 from spade.agent import Agent
 from spade.behaviour import FSMBehaviour, State
 
@@ -16,6 +18,7 @@ class GeneralBehaviour(FSMBehaviour):
         """
         super().__init__()
         init_state = Init()
+        self.logger = logging.getLogger()
         self.add_state(name="Init", state=init_state, initial=True)
         pre: Action = None
         pre_state: State = None
@@ -36,10 +39,10 @@ class GeneralBehaviour(FSMBehaviour):
             pre_state = state_to_add
 
     async def on_start(self):
-        print("Initializing the fsm behaviour")
+        self.logger.info("Initializing the fsm behaviour")
 
     async def on_end(self):
-        print("Behaviour finished")
+        self.logger.info("Behaviour finished")
         await self.agent.stop()
 
 
@@ -48,17 +51,19 @@ class Init(State):
         super().__init__()
 
     async def run(self):
-        print("Initialising the robot")
-        print("First state of the behaviour")
+        logger = logging.getLogger("agent.behaviours.Init")
+        logger.info("Initialising the robot")
+        logger.info("First state of the behaviour")
 
 
 class DoingAction(State):
     def __init__(self, action: Action):
         super().__init__()
         self.actionTodo = action
+        self.logger = logging.getLogger()
 
     async def on_start(self):
-        print("Do the action")
+        self.logger.info("Begin doing the actions state")
 
     async def run(self):
         self.actionTodo.do()
