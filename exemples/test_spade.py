@@ -12,7 +12,7 @@ def action_test(a):
 
 
 actions = [
-    Action("Bouger1", function=lambda a: action_test),
+    Action("Bouger1", function=action_test),
 ]
 
 if __name__ == '__main__':
