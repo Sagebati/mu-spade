@@ -67,5 +67,5 @@ class DoingAction(State):
 
     async def run(self):
         self.logger.info("Doing {}".format(self.actionTodo.name))
-        await self.actionTodo.do()
+        self.actionTodo.do()
         self.logger.info("Finished {}".format(self.actionTodo.name))
