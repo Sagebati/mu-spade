@@ -35,6 +35,7 @@ def action_test(a):
 
 actions = [
     Action("Bouger1", function=action_test),
+    Action("Test1", function=lambda a: print("Bouger accompli"))
 ]
 
 if __name__ == '__main__':
