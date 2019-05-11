@@ -9,7 +9,6 @@ jwd1 = "turtle_a@172.27.96.17"
 
 def action_test(a):
     try:
-        rospy.init_node('nav_test', anonymous=False)
         navigator = GoToMapPose()
 
         # Customize the following values so they are appropriate for your location
@@ -36,7 +35,7 @@ actions = [
 
 if __name__ == '__main__':
     from agent.Turtle import Turtle
-
+    rospy.init_node('nav_test', anonymous=False)
     turtleBot_a = Turtle(jwd1, pwd, actions)
     turtleBot_a.start()
     turtleBot_a.web.start(hostname="127.0.0.1", port="10000")
