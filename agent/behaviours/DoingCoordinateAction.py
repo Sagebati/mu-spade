@@ -154,5 +154,5 @@ class DoingCoordinateAction(State):
     async def run(self):
         for a in self.my_actions:
             logger.info("Begin action {}".format(a.name))
-            a.do()
+            await a.do()
             logger.info("Finished action {}".format(a.name))
