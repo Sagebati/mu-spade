@@ -14,5 +14,5 @@ class Action:
     async def _todo(self):
         self.todo(self)
 
-    def do(self):
+    async def do(self):
         await asyncio.create_task(self._todo())
