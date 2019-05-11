@@ -1,6 +1,4 @@
-import logging
-
-from agent.coordination import CoordinateAction, Action
+from agent.coordination import Action
 
 pwd = "dummy"
 jwd1 = "turtle_a@172.27.96.17"

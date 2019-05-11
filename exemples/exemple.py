@@ -1,10 +1,8 @@
-import logging
-
 from agent.coordination import CoordinateAction, Action
 
 pwd = "dummy"
-jwd1 = "turtle_a@172.27.96.17"
-jwd2 = "turtle_b@172.27.96.17"
+jwd1 = "turtle_a@127.0.0.1"
+jwd2 = "turtle_b@127.0.0.1"
 
 action_coord = CoordinateAction(goal="PushTheBox", actions={
     "action1": [
