@@ -1,7 +1,4 @@
-import rospy
-
 from agent.coordination import Action
-from turtle.GoToMapPose import GoToMapPose
 
 pwd = "dummy"
 jwd1 = "turtle_a@172.27.96.17"

@@ -153,4 +153,4 @@ class DoingCoordinateAction(State):
 
     async def run(self):
         for a in self.my_actions:
-            a.do()
+            await a.do()

@@ -66,4 +66,4 @@ class DoingAction(State):
         self.logger.info("Begin doing the actions state")
 
     async def run(self):
-        self.actionTodo.do()
+        await self.actionTodo.do()
