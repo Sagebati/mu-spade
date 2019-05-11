@@ -1,4 +1,5 @@
 import logging
+
 from agent.coordination import CoordinateAction, Action
 
 logging.basicConfig(level=logging.INFO)
@@ -28,10 +29,6 @@ if __name__ == '__main__':
     from agent.Turtle import Turtle
 
     turtleBot_a = Turtle(jwd1, pwd, exemple1, [jwd2])
-    turtleBot_b = Turtle(jwd2, pwd, exemple1, [jwd1])
     turtleBot_a.start()
     turtleBot_a.web.start(hostname="127.0.0.1", port="10000")
-    turtleBot_b.start()
-    turtleBot_b.web.start(hostname="127.0.0.1", port="10001")
-    turtleBot_b.stop()
     turtleBot_a.stop()

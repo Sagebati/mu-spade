@@ -18,7 +18,7 @@ class GeneralBehaviour(FSMBehaviour):
         """
         super().__init__()
         init_state = Init()
-        self.logger = logging.getLogger()
+        self.logger = logging.getLogger("agent.behaviours.GeneralBehaviour")
         self.add_state(name="Init", state=init_state, initial=True)
         pre: Action = None
         pre_state: State = None

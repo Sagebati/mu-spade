@@ -7,7 +7,14 @@ from spade.template import Template
 
 from agent.coordination import CoordinateAction
 
-logger = logging.getLogger()
+logger = logging.getLogger("agent.behaviours.DoingCoordinateAction")
+
+
+async def empty_queue(state):
+    msg = await state.receive()
+    while msg is not None:
+        msg = await state.receive()
+        logger.info("Cleared the queue of {}".format(msg.body))
 
 
 class DoingCoordinateAction(State):
@@ -30,9 +37,9 @@ class DoingCoordinateAction(State):
         action_choose_key = random.choice(self.actions_remaining)
         return action_choose_key
 
-    async def __second_handshake(self):
+    async def __resolution_handshake(self):
         logger.info("Waiting for instructions")
-        instructions_message = await self.receive(50)
+        instructions_message = await self.receive(100)
         to_reveive = Template()
         to_reveive.set_metadata("performative", "inform")
         if to_reveive.match(instructions_message):
@@ -53,16 +60,17 @@ class DoingCoordinateAction(State):
         action.
         :param message: the message to handle
         """
-        logger.info("Traiter message %s", message.body)
+        logger.info("Traiter message {}".format(message.body))
         template = Template()
         template.set_metadata("performative", "proposal")
         if template.match(message):
             if message.body == self.coord_action.goal:
-                logger.info("Accept proposal the action it's the same goal ")
+                logger.info("Accept proposal, the action it's the same goal ")
                 accept_pop = message.make_reply()
                 accept_pop.set_metadata("performative", "accept-proposal")
                 await self.send(accept_pop)
-                await self.__second_handshake()
+                logger.info("Send accept-proposal to {}".format(message.sender))
+                await self.__resolution_handshake()
             else:
                 logger.info("Not the same goal")
                 accept_pop = message.make_reply()
@@ -76,14 +84,17 @@ class DoingCoordinateAction(State):
          """
         import random
         while len(self.actions_remaining) != 0:
-            logger.info("Search agent who has the same goal: %s", self.coord_action.goal)
-            msg = await self.receive(random.randint(1, 20))
+            logger.info("Search agent who has the same goal: {}".format(self.coord_action.goal))
+            logger.info("Waiting for some agent to contact me")
+            await empty_queue(self)
+            msg = await self.receive(random.randint(10, 50))
             if msg:
                 await self.__handle_handshake(msg)
                 break
             else:
+                logger.info("Doesn't receive any messages")
                 for agent_jid in self.contacts:
-                    logger.info("Try with ", agent_jid)
+                    logger.info("Try with {}".format(agent_jid))
                     await self.__begin_handshake(agent_jid)
 
     async def __begin_handshake(self, agent_jid):
@@ -95,19 +106,21 @@ class DoingCoordinateAction(State):
         message_to_send = Message(to=agent_jid)
         message_to_send.set_metadata("performative", "proposal")
         message_to_send.body = self.coord_action.goal
-        logger.info("Send message to ", agent_jid)
+        logger.info("Send message to {}".format(agent_jid))
         await self.send(message_to_send)
         logger.info("Waiting for the reponse")
-        message = await self.receive(100)
+        await empty_queue(self)
+        message = await self.receive(25)
         if message is None:
             logger.info("The dest didn't respond")
         else:
             t = Template()
-            t.sender = agent_jid
             t.set_metadata("performative", "accept-proposal")
             if t.match(message):
-                logger.info(agent_jid, " accepted the proposal")
+                logger.info("{} Accepted the proposal".format(agent_jid))
                 await self.first_handshake(message)
+            else:
+                logger.warning("The message doesn't match the waiting")
 
     async def first_handshake(self, message: Message):
         """
