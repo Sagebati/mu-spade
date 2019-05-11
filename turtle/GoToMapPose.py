@@ -78,8 +78,5 @@ if __name__ == '__main__':
         else:
             rospy.loginfo("The base failed to reach the desired pose")
 
-        # Sleep to give the last log messages time to be sent
-        rospy.sleep(1)
-
     except rospy.ROSInterruptException:
         rospy.loginfo("Ctrl-C caught. Quitting")
