@@ -70,7 +70,8 @@ class DoingCoordinateAction(State):
                 await self.send(accept_pop)
 
     async def __prepare_action(self):
-        """Search an agent to collaborate for the coordinate action, then tries to connect with him,
+        """
+            Search an agent to collaborate for the coordinate action, then tries to connect with him,
             doesn't begin the action if there is no worker.
          """
         import random
