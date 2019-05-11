@@ -10,7 +10,7 @@ logger = logging.getLogger("agent.Turtle")
 
 class Turtle(CoordAgent):
 
-    def __init__(self, jid, password, actions: [], contacts: [Agent], verify_security=False, movement=None, arm=None):
+    def __init__(self, jid, password, actions: [], contacts: [Agent] = [], verify_security=False, movement=None, arm=None):
         super().__init__(jid, password, actions, contacts, verify_security)
         self.movement_service = movement
         self.arm_service = arm
