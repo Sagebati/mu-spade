@@ -1,7 +1,7 @@
 from agent.coordination import Action
 
 pwd = "dummy"
-jwd1 = "turtle_a@172.27.96.17"
+jwd1 = "turtle_a@127.0.0.1"
 
 
 def action_test(a):

@@ -11,5 +11,8 @@ class Action:
         self.name = name
         self.todo = function
 
+    async def __todo(self):
+        self.todo(self)
+
     async def do(self):
-        await asyncio.create_task(self.todo(self))
+        await asyncio.create_task(self.__todo())
