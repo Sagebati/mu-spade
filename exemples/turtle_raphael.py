@@ -5,23 +5,23 @@ from agent.coordination import CoordinateAction, Action
 logging.basicConfig(level=logging.INFO)
 
 pwd = "dummy"
-jwd1 = "turtle_a@127.0.0.1"
-jwd2 = "turtle_b@127.0.0.1"
+jwd1 = "raphael@127.0.0.1"
+jwd2 = "safia@127.0.0.1"
 
 action_coord = CoordinateAction(goal="PushTheBox", actions={
     "action1": [
-        Action(name="Preparer", function=lambda a: print("Preparer l'action")),
-        Action(name="Push", function=lambda a: print("Pousser la boite"))
+        Action(name="Preparer", function=lambda a: print(a.jid, ": Prepare to push the box")),
+        Action(name="Push", function=lambda a: print(a.jid, ": Push the box"))
     ],
     "action2": [
-        Action(name="Preparer2", function=lambda a: print("Preparer l'action")),
-        Action(name="Push2", function=lambda a: print("Pousser la boite"))]
+        Action(name="Preparer2", function=lambda a: print(a.jid, ": Prepare to push the box")),
+        Action(name="Push2", function=lambda a: print(a.jid, ": Push the box"))]
 })
 
 exemple1 = [
-    Action("Bouger1", function=lambda a: print("Je bouger ver x,y")),
-    Action("Bouger2", function=lambda a: print("Je bouger ver x,y")),
-    Action("Bouger3", function=lambda a: print("Je bouger ver x,y")),
+    Action("Move1", function=lambda a: print(a.jid, ": I move to x,y")),
+    Action("Move2", function=lambda a: print(a.jid, ": I move to x,y")),
+    Action("Move3", function=lambda a: print(a.jid, ": I move to x,y")),
     action_coord
 ]
 

@@ -6,7 +6,7 @@ import actionlib
 from actionlib_msgs.msg import GoalStatus
 from geometry_msgs.msg import Pose, Point, Quaternion
 from geometry_msgs.msg import Twist
-from turtle.services.positionService import PositionService
+from turtle.PositionService import PositionService
 
 # for quarternion generation
 from tf import transformations
