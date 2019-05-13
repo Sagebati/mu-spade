@@ -1,21 +1,13 @@
 import rospy
 import logging
 
-from agent.coordination import Action
+from agent.coordination import Action, CoordinateAction
 from turtle.GoToMapPose import GoToMapPose
 
 logging.basicConfig(level=logging.INFO)
 
 pwd = "dummy"
-jwd1 = "turtle_a@172.27.96.17"
-
-
-def point_a(a):
-    goto_simpl(a, 4.5, -0.2)
-
-
-def point_b(a):
-    goto_simpl(a, 0, 0)
+jwd1 = "turtle_b@172.27.96.17"
 
 
 def goto_simpl(a, x, y):
@@ -40,17 +32,24 @@ def goto_simpl(a, x, y):
         rospy.loginfo("Ctrl-C caught. Quitting")
 
 
+action_coord = CoordinateAction(goal="PushTheBox", actions={
+    "action1": [
+        Action(name="Push", function=lambda a: goto_simpl(a, x=4.0, y=-1.0))
+    ],
+    "action2": [
+        Action(name="Push2", function=lambda a: goto_simpl(a, x=3.5, y=-1.0))]
+})
+
 actions = [
-    Action("Bouger1", function=lambda a: goto_simpl(a, 4.5,-0.2)),
-    Action("Bouger2", function=point_b),
-    Action("Test1", function=lambda a: print("Bouger accompli"))
+    Action("Move1", function=lambda a: goto_simpl(a, 4.0, -0.2)),
+    action_coord
 ]
 
 if __name__ == '__main__':
     from agent.Turtle import Turtle
 
     rospy.init_node('nav_test', anonymous=False)
-    turtleBot_a = Turtle(jwd1, pwd, actions)
+    turtleBot_a = Turtle(jwd1, pwd, actions, contacts=["turtle_a@172.27.96.17"])
     turtleBot_a.start()
-    turtleBot_a.web.start(hostname="127.0.0.1", port="10000")
+    turtleBot_a.web.start(hostname="127.0.0.1", port="10001")
     turtleBot_a.stop()
